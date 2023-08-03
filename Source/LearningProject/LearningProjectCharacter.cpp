@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "LearningProjectCharacter.h"
+
+#include "BaseArm.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -64,6 +66,27 @@ void ALearningProjectCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	//Spawn an arm of the type specified in the blueprint
+	pArm = GetWorld()->SpawnActor<ABaseArm>(SpawningArm, FVector::ZeroVector, FRotator::ZeroRotator);
+	pArm->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	//Set its owner to this
+	pArm->SetOwnerCharacter(this);
+}
+
+void ALearningProjectCharacter::ApplySlowFallingEffect()
+{
+	FVector velocity = GetVelocity();
+	if (velocity.Z < -30.0f)
+	{
+		velocity.Z = -30.0f;
+		LaunchCharacter(velocity, true, true);
+	}
+}
+
+bool ALearningProjectCharacter::IsGrounded() const
+{
+	return GetCharacterMovement()->IsMovingOnGround();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -83,6 +106,9 @@ void ALearningProjectCharacter::SetupPlayerInputComponent(class UInputComponent*
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALearningProjectCharacter::Look);
+
+		//Using arm
+		EnhancedInputComponent->BindAction(ArmAction, ETriggerEvent::Started, this, &ALearningProjectCharacter::UseArm);
 
 	}
 
@@ -127,6 +153,11 @@ void ALearningProjectCharacter::Look(const FInputActionValue& Value)
 	//	AddControllerYawInput(LookAxisVector.X);
 	//	AddControllerPitchInput(LookAxisVector.Y);
 	//}
+}
+
+void ALearningProjectCharacter::UseArm(const FInputActionValue& Value)
+{
+	pArm->UseArm();
 }
 
 
