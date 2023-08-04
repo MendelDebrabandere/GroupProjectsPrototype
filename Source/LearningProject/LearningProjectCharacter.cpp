@@ -77,9 +77,9 @@ void ALearningProjectCharacter::BeginPlay()
 void ALearningProjectCharacter::ApplySlowFallingEffect()
 {
 	FVector velocity = GetVelocity();
-	if (velocity.Z < -30.0f)
+	if (velocity.Z < -100.0f)
 	{
-		velocity.Z = -30.0f;
+		velocity.Z = -100.0f;
 		LaunchCharacter(velocity, true, true);
 	}
 }
