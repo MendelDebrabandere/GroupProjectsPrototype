@@ -27,6 +27,6 @@ void ABaseArm::Tick(float DeltaTime)
 
 void ABaseArm::SetOwnerCharacter(ALearningProjectCharacter* character)
 {
-	pOwnerCharacter = character;
+	OwnerCharacter = character;
 }
 

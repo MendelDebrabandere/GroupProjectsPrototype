@@ -21,7 +21,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	class ALearningProjectCharacter* pOwnerCharacter{};
+	class ALearningProjectCharacter* OwnerCharacter{};
 
 public:	
 	// Called every frame

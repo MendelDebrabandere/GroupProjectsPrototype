@@ -16,8 +16,6 @@ class LEARNINGPROJECT_API AUmbrellaArm : public ABaseArm
 
 
 public:
-	AUmbrellaArm();
-
 	virtual void BeginPlay() override;
 
 	virtual void UseArm() override;
@@ -28,6 +26,6 @@ public:
 private:
 	bool IsActive{false};
 
-	UStaticMeshComponent* pUmbrellaHood {};
+	UStaticMeshComponent* UmbrellaHood {};
 
 };

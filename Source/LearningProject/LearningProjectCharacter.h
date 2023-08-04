@@ -76,10 +76,20 @@ public:
 	bool IsGrounded() const;
 
 
+	UFUNCTION(BlueprintCallable)
+	void ChangeArm(bool umbrellaArm, bool hammerArm);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RemoveArmSelector();
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Spawn")
-	TSubclassOf<ABaseArm> SpawningArm{ nullptr };
+	TSubclassOf<ABaseArm> UmbrellaArm_BP{ nullptr };
 
-	ABaseArm* pArm;
+	UPROPERTY(EditAnywhere, Category = "Spawn")
+	TSubclassOf<ABaseArm> HammerArm_BP{ nullptr };
+
+
+	ABaseArm* Arm{};
 };
 

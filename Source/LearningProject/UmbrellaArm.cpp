@@ -4,11 +4,6 @@
 #include "UmbrellaArm.h"
 #include "LearningProjectCharacter.h"
 
-AUmbrellaArm::AUmbrellaArm()
-{
-	PrimaryActorTick.bCanEverTick = true;
-}
-
 void AUmbrellaArm::BeginPlay()
 {
 	Super::BeginPlay();
@@ -18,7 +13,7 @@ void AUmbrellaArm::BeginPlay()
 	{
 		if (ActorComp->GetName() == TEXT("Cone"))
 		{
-			pUmbrellaHood = Cast<UStaticMeshComponent>(ActorComp);
+			UmbrellaHood = Cast<UStaticMeshComponent>(ActorComp);
 			break;
 		}
 	}
@@ -33,34 +28,30 @@ void AUmbrellaArm::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (pOwnerCharacter->IsGrounded())
+	if (OwnerCharacter->IsGrounded())
 		IsActive = false;
 
 	if (IsActive)
 	{
 		//Apply slow effect
-		pOwnerCharacter->ApplySlowFallingEffect();
+		OwnerCharacter->ApplySlowFallingEffect();
 
 		//set hood to open scale
-		if (pUmbrellaHood)
+		if (UmbrellaHood)
 		{
 			// Set the new scale for the component.
 			FVector NewScale(0.75f, 0.75f, 0.4f);
-			pUmbrellaHood->SetWorldScale3D(NewScale);
+			UmbrellaHood->SetWorldScale3D(NewScale);
 		}
 	}
 	else
 	{
 		//set hood to normal scale
-		if (pUmbrellaHood)
+		if (UmbrellaHood)
 		{
 			// Set the new scale for the component.
 			FVector NewScale(0.15f, 0.15f, 0.4f);
-			pUmbrellaHood->SetWorldScale3D(NewScale);
+			UmbrellaHood->SetWorldScale3D(NewScale);
 		}
 	}
-
-	// Use the GEngine global variable to display the message.
-	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Red, FString::Printf(TEXT("Umbrella = %d"), IsActive));
-	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, TEXT("Current arm: Umbrella"));
 }

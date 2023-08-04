@@ -67,11 +67,8 @@ void ALearningProjectCharacter::BeginPlay()
 		}
 	}
 
-	//Spawn an arm of the type specified in the blueprint
-	pArm = GetWorld()->SpawnActor<ABaseArm>(SpawningArm, FVector::ZeroVector, FRotator::ZeroRotator);
-	pArm->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	//Set its owner to this
-	pArm->SetOwnerCharacter(this);
+	//Spawn an arm of the type
+	ChangeArm(false, true);
 }
 
 void ALearningProjectCharacter::ApplySlowFallingEffect()
@@ -87,6 +84,39 @@ void ALearningProjectCharacter::ApplySlowFallingEffect()
 bool ALearningProjectCharacter::IsGrounded() const
 {
 	return GetCharacterMovement()->IsMovingOnGround();
+}
+
+void ALearningProjectCharacter::ChangeArm(bool umbrellaArm, bool hammerArm)
+{
+	//check if swapping to the same arm that is already selected
+	if (Arm)
+	{
+		if ((umbrellaArm && Arm->IsA(UmbrellaArm_BP)) ||
+			(hammerArm && Arm->IsA(HammerArm_BP)))
+		{
+			RemoveArmSelector();
+			return;
+		}
+		else
+			//Destroy original arm
+			Arm->Destroy();
+	}
+
+	//Spawn new arm
+	if (umbrellaArm)
+	{
+		Arm = GetWorld()->SpawnActor<ABaseArm>(UmbrellaArm_BP, FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+	else if (hammerArm)
+	{
+		Arm = GetWorld()->SpawnActor<ABaseArm>(HammerArm_BP, FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+
+	Arm->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	//Set its owner to this
+	Arm->SetOwnerCharacter(this);
+
+	RemoveArmSelector();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -157,7 +187,7 @@ void ALearningProjectCharacter::Look(const FInputActionValue& Value)
 
 void ALearningProjectCharacter::UseArm(const FInputActionValue& Value)
 {
-	pArm->UseArm();
+	Arm->UseArm();
 }
 
 
