@@ -107,7 +107,7 @@ void ALearningProjectCharacter::ChangeArm(bool umbrellaArm, bool hammerArm)
 	{
 		Arm = GetWorld()->SpawnActor<ABaseArm>(UmbrellaArm_BP, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
-	else if (hammerArm)
+	else
 	{
 		Arm = GetWorld()->SpawnActor<ABaseArm>(HammerArm_BP, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
