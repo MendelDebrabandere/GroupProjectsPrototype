@@ -7,6 +7,7 @@
 #include "InputActionValue.h"
 #include "LearningProjectCharacter.generated.h"
 
+class ABaseArm;
 
 UCLASS(config=Game)
 class ALearningProjectCharacter : public ACharacter
@@ -37,6 +38,10 @@ class ALearningProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	/** Use Arm Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* ArmAction;
+
 public:
 	ALearningProjectCharacter();
 	
@@ -48,7 +53,10 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+
+	/** Called for looking input */
+	void UseArm(const FInputActionValue& Value);
+
 
 protected:
 	// APawn interface
@@ -62,5 +70,26 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+
+	void ApplySlowFallingEffect();
+	bool IsGrounded() const;
+
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeArm(bool umbrellaArm, bool hammerArm);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RemoveArmSelector();
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Spawn")
+	TSubclassOf<ABaseArm> UmbrellaArm_BP{ nullptr };
+
+	UPROPERTY(EditAnywhere, Category = "Spawn")
+	TSubclassOf<ABaseArm> HammerArm_BP{ nullptr };
+
+
+	ABaseArm* Arm{};
 };
 

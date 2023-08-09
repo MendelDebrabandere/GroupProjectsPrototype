@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "LearningProjectCharacter.h"
+
+#include "BaseArm.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -64,6 +66,57 @@ void ALearningProjectCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	//Spawn an arm of the type
+	ChangeArm(false, true);
+}
+
+void ALearningProjectCharacter::ApplySlowFallingEffect()
+{
+	FVector velocity = GetVelocity();
+	if (velocity.Z < -100.0f)
+	{
+		velocity.Z = -100.0f;
+		LaunchCharacter(velocity, true, true);
+	}
+}
+
+bool ALearningProjectCharacter::IsGrounded() const
+{
+	return GetCharacterMovement()->IsMovingOnGround();
+}
+
+void ALearningProjectCharacter::ChangeArm(bool umbrellaArm, bool hammerArm)
+{
+	//check if swapping to the same arm that is already selected
+	if (Arm)
+	{
+		if ((umbrellaArm && Arm->IsA(UmbrellaArm_BP)) ||
+			(hammerArm && Arm->IsA(HammerArm_BP)))
+		{
+			RemoveArmSelector();
+			return;
+		}
+		else
+			//Destroy original arm
+			Arm->Destroy();
+	}
+
+	//Spawn new arm
+	if (umbrellaArm)
+	{
+		Arm = GetWorld()->SpawnActor<ABaseArm>(UmbrellaArm_BP, FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+	else if (hammerArm)
+	{
+		Arm = GetWorld()->SpawnActor<ABaseArm>(HammerArm_BP, FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+
+	Arm->AttachToActor(this, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	//Set its owner to this
+	Arm->SetOwnerCharacter(this);
+
+	RemoveArmSelector();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -83,6 +136,9 @@ void ALearningProjectCharacter::SetupPlayerInputComponent(class UInputComponent*
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ALearningProjectCharacter::Look);
+
+		//Using arm
+		EnhancedInputComponent->BindAction(ArmAction, ETriggerEvent::Started, this, &ALearningProjectCharacter::UseArm);
 
 	}
 
@@ -127,6 +183,11 @@ void ALearningProjectCharacter::Look(const FInputActionValue& Value)
 	//	AddControllerYawInput(LookAxisVector.X);
 	//	AddControllerPitchInput(LookAxisVector.Y);
 	//}
+}
+
+void ALearningProjectCharacter::UseArm(const FInputActionValue& Value)
+{
+	Arm->UseArm();
 }
 
 
