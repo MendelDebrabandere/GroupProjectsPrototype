@@ -21,6 +21,9 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
+	bool IsSwinging() const { return CooldownTimer > 0.01f; }
+
 private:
 
 	UPROPERTY(EditAnywhere)
